@@ -29,6 +29,7 @@ GET `/api/v1/categories` (public endpoint)
 - size (optional): number of categories per page, default is 10
 - page (optional): page number, default is 1
 - sort (optional): sorting criteria, e.g., "name:asc" or "createdAt:desc"
+- search (optional): search term to filter categories by name
 
 **Response:**
 
@@ -184,6 +185,7 @@ GET `/api/v1/products` (public endpoint)
 - size (optional): number of products per page, default is 10
 - page (optional): page number, default is 1
 - sort (optional): sorting criteria, e.g., "name:asc" or "createdAt:desc"
+- search (optional): search term to filter products by name
 
 **Response:**
 ```json
