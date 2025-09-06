@@ -20,8 +20,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDto createCategory(CreateCategoryRequestDto req) {
         //check name and slug exist
-        if(categoryRepository.existsByName((req.getName()))) throw new DuplicateResourceException("category name already exists");
-        if(categoryRepository.existsBySlug(req.getSlug())) throw new DuplicateResourceException("category slug already exists");
+        if(categoryRepository.existsByName((req.getName()))) throw new DuplicateResourceException("error.category.name.exists");
+        if(categoryRepository.existsBySlug(req.getSlug())) throw new DuplicateResourceException("error.category.slug.exists");
 
         //save to db
         CategoryEntity categoryEntity = new CategoryEntity();
