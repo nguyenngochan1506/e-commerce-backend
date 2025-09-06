@@ -18,7 +18,6 @@ POST `/api/v1/categories`
   "description": "All kinds of electronic devices", // optional
   "slug": "electronics",
   "thumbnail": "http://example.com/image.jpg", // optional
-  "isActive": true // optional by default is true
   "parentId": "parent-category-id" // optional
 }
 ```
@@ -67,12 +66,41 @@ GET `/api/v1/categories` (public endpoint)
 ```
 
 ### Product
-#### 1. Create Product
 #### Flow:
 1. before creating a product, you need to create categories first.
 2. create options and option-value 
 3. create product
 4. create product variations with options and option-values
+
+#### 1. Create Options and Option Values
+POST `/api/v1/product/options`
+**Request Body:**
+```json
+{
+  "name": "Color",
+  "values": ["Red", "Blue", "Green"]
+}
+```
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Option created successfully",
+  "data": {
+    "id": "option-uuid-1",
+    "name": "Color",
+    "values": [
+      {"id":  "val-uuid-red", "value": "Red"},
+      {"id":  "val-uuid-blue", "value": "Blue"},
+      {"id":  "val-uuid-green", "value": "Green"}
+    ]
+  }
+}
+```
+
+
+
+#### 3. Create Product
 
 POST `/api/v1/products`
 
@@ -83,7 +111,8 @@ POST `/api/v1/products`
   "description": "Tui bán Iphone 20 Pro Max", // optional
   "category": ["cate-id-1", "cate-id-2"],
   "slug": "iphone-20-pro-max",
-  "status": "PUBLISHED" // optional by default is "DRAFT",
+  "status": "PUBLISHED" // optional by default is "DRAFT",,
+  "thumbnail": "http://example.com/iphone20promax.jpg",
   "attributes": [
     {"key": "origin", "value": "USA"},
     {"key":  "brand", "value": "Apple"},
@@ -92,7 +121,7 @@ POST `/api/v1/products`
   ]
 }
 ```
-#### 2. Create Product Variation
+#### 4. Create Product Variation
 POST `/api/v1/products/{productId}/variations`
 
 **Request Body:**
@@ -105,12 +134,13 @@ POST `/api/v1/products/{productId}/variations`
   "price": 30000000, // in VND
   "currency": "VND", // optional by default is "VND"
   "stock": 20 // optional by default is 0,
+  "image_url": "http://example.com/iphone20promax256.jpg",
   "isDefault": true // optional by default is false
-  
+  "optionValueIds": ["val-uuid-promax", "val-uuid-256gb"] // array of option value ids
 }
 ```
 
-#### 3. Get product details
+#### 5. Get product details
 GET `/api/v1/products/{productId}` (public endpoint)
 **Response:**
 ```json
@@ -209,3 +239,4 @@ GET `/api/v1/products` (public endpoint)
   }
 }
 ```
+

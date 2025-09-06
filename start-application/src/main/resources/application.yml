@@ -4,3 +4,15 @@ server:
 spring:
   application:
     name: e-commerce-backend
+  datasource:
+    url: ${DB_URL}${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.hbm2ddl.create_namespaces: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
