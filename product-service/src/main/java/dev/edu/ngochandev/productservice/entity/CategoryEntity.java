@@ -39,6 +39,9 @@ public class CategoryEntity extends BaseEntity{
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CategoryEntity> children = new HashSet<>();
 
+    @OneToMany(mappedBy = "category")
+    private Set<ProductEntity> products = new HashSet<>();
+
 
     @Override
     public void prePersist() {
