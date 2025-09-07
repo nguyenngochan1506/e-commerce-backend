@@ -106,7 +106,7 @@ nó liên quan đến Product và các category con nên quất sau
 4. create product variations with options and option-values
 
 #### 1. Create Options and Option Values
-POST `/api/v1/product/options`
+POST `/api/v1/products/{id}/options`
 **Request Body:**
 ```json
 {
@@ -142,7 +142,7 @@ POST `/api/v1/products`
 {
   "name": "Iphone 20 Pro Max",
   "description": "Tui bán Iphone 20 Pro Max", // optional
-  "category": ["cate-id-1", "cate-id-2"],
+  "categoryId": "cate-id-1",
   "slug": "iphone-20-pro-max",
   "status": "PUBLISHED" // optional by default is "DRAFT",,
   "thumbnail": "http://example.com/iphone20promax.jpg",

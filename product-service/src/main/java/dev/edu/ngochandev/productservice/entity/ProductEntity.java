@@ -1,5 +1,6 @@
 package dev.edu.ngochandev.productservice.entity;
 
+import dev.edu.ngochandev.productservice.common.ProductAttributes;
 import dev.edu.ngochandev.productservice.common.ProductStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,10 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "tbl_products", schema = "product_schema")
@@ -35,7 +33,7 @@ public class ProductEntity extends BaseEntity{
 
     @Column(name = "attributes", columnDefinition = "JSONB")
     @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Object> attributes = new HashMap<>();
+    private List<ProductAttributes> attributes = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
@@ -43,6 +41,9 @@ public class ProductEntity extends BaseEntity{
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<ProductVariant> variants = new HashSet<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<ProductOptionEntity> options = new HashSet<>();
 
     @Override
     public void prePersist() {
