@@ -4,6 +4,7 @@ import dev.edu.ngochandev.productservice.dto.req.CreateCategoryRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.CategoryResponseDto;
 import dev.edu.ngochandev.productservice.service.CategoryService;
 import dev.edu.ngochandev.sharedkernel.common.Translator;
+import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.sharedkernel.dto.res.SuccessResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,16 @@ public class CategoryController {
                 .httpStatus(HttpStatus.CREATED)
                 .message(translator.translate("category.create.success"))
                 .data(categoryService.createCategory(req))
+                .build();
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    SuccessResponseDto<PageResponseDto<CategoryResponseDto>> getAllCate(){
+        return SuccessResponseDto.<PageResponseDto<CategoryResponseDto>>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("category.get-all.success"))
+                .data(categoryService.getAllCategories())
                 .build();
     }
 }

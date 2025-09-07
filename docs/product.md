@@ -22,13 +22,36 @@ POST `/api/v1/categories`
 }
 ```
 
-#### 2. Get all categories
+#### 2. Get list of categories
 GET `/api/v1/categories` (public endpoint)
-**Parameters:**
-- size (optional): number of categories per page, default is 10
-- page (optional): page number, default is 1
-- sort (optional): sorting criteria, e.g., "name:asc" or "createdAt:desc"
-- search (optional): search term to filter categories by name
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Category created successfully",
+  "data": {
+    "currentPage": 1,
+    "totalPages": 1,
+    "totalItems": 1,
+    "items": [
+      {
+        "id": "category-id-1",
+        "name": "Electronics",
+        "description": "All kinds of electronic devices",
+        "slug": "electronics",
+        "thumbnail": "http://example.com/image.jpg",
+        "level": 1,
+        "parentId": null,
+        "children": []
+      }
+    ]
+  }
+}
+```
+
+#### 2. Get all category tree
+GET `/api/v1/categories` (public endpoint)
 
 **Response:**
 
@@ -64,6 +87,8 @@ GET `/api/v1/categories` (public endpoint)
   }
 }
 ```
+
+
 
 ### Product
 #### Flow:

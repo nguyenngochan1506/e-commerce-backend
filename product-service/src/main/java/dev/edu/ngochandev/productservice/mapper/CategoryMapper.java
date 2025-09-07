@@ -8,5 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     @Mapping(target = "parentId", source = "parent.id")
+    @Mapping(target = "children", source = "children")
     CategoryResponseDto toCategoryResponseDto(CategoryEntity categoryEntity);
 }

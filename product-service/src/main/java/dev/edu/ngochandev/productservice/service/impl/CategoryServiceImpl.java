@@ -6,10 +6,13 @@ import dev.edu.ngochandev.productservice.entity.CategoryEntity;
 import dev.edu.ngochandev.productservice.mapper.CategoryMapper;
 import dev.edu.ngochandev.productservice.repository.CategoryRepository;
 import dev.edu.ngochandev.productservice.service.CategoryService;
+import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
 import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,5 +41,17 @@ public class CategoryServiceImpl implements CategoryService {
         categoryEntity = categoryRepository.save(categoryEntity);
 
         return categoryMapper.toCategoryResponseDto(categoryEntity);
+    }
+
+    @Override
+    public PageResponseDto<CategoryResponseDto> getAllCategories() {
+        List<CategoryEntity> categories = categoryRepository.findAllByLevel(1);
+        if(categories.isEmpty()) return PageResponseDto.<CategoryResponseDto>builder().build();
+        List<CategoryResponseDto> categoryResponseDtos = categories.stream().map(categoryMapper::toCategoryResponseDto).toList();
+        return PageResponseDto.<CategoryResponseDto>builder()
+                .totalItems(categories.size())
+                .totalPages(1)
+                .items(categoryResponseDtos)
+                .build();
     }
 }
