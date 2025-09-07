@@ -14,6 +14,6 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, String
 
     boolean existsBySlug(String slug);
 
-    @Query("SELECT c FROM CategoryEntity c JOIN c.children WHERE c.level = :level")
+    @Query("SELECT c FROM CategoryEntity c JOIN c.children WHERE c.level = :level AND c.isActive = true")
     List<CategoryEntity> findAllByLevel(@Param("level") Integer level);
 }

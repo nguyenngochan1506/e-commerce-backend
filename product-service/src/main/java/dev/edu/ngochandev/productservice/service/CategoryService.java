@@ -8,4 +8,6 @@ public interface CategoryService {
     CategoryResponseDto createCategory(CreateCategoryRequestDto req);
 
     PageResponseDto<CategoryResponseDto> getAllCategories();
+
+    void updateCategoryStatus(String id, boolean active);
 }

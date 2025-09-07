@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +54,27 @@ public class CategoryServiceImpl implements CategoryService {
                 .totalPages(1)
                 .items(categoryResponseDtos)
                 .build();
+    }
+
+    @Override
+    public void updateCategoryStatus(String id, boolean active) {
+        CategoryEntity cate = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.category.not-found"));
+        updateStatusRecursively(cate, active);
+    }
+
+    private void updateStatusRecursively(CategoryEntity category, boolean active) {
+        if (Objects.equals(category.getIsActive(), active)) {
+            return;
+        }
+
+        category.setIsActive(active);
+        categoryRepository.save(category);
+
+        if (category.getChildren() != null && !category.getChildren().isEmpty()) {
+            for (CategoryEntity child : category.getChildren()) {
+                updateStatusRecursively(child, active);
+            }
+        }
     }
 }

@@ -37,4 +37,13 @@ public class CategoryController {
                 .data(categoryService.getAllCategories())
                 .build();
     }
+    @PatchMapping("/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    SuccessResponseDto<Void> deactivateCategory(@PathVariable("id") String id, @RequestParam(value = "active", defaultValue = "false") boolean active) {
+        categoryService.updateCategoryStatus(id, active);
+        return SuccessResponseDto.<Void>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("category.deactivate.success"))
+                .build();
+    }
 }

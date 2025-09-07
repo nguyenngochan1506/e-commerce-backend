@@ -88,6 +88,14 @@ GET `/api/v1/categories` (public endpoint)
 }
 ```
 
+#### 3. Disable/Enable category
+PATCH `/api/v1/categories/{categoryId}/status?active=true|false`
+**Request Parameters:**
+- active: boolean (true to enable, false to disable)
+
+#### 4. Delete category
+DELETE `/api/v1/categories/{categoryId}`
+nó liên quan đến Product và các category con nên quất sau
 
 
 ### Product
