@@ -1,9 +1,9 @@
 package dev.edu.ngochandev.productservice.controller;
 
-import dev.edu.ngochandev.productservice.dto.req.CreateProductOptionRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
-import dev.edu.ngochandev.productservice.dto.res.ProductOptionResponseDto;
+import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductResponseDto;
+import dev.edu.ngochandev.productservice.dto.res.ProductVariantResponseDto;
 import dev.edu.ngochandev.productservice.service.ProductService;
 import dev.edu.ngochandev.sharedkernel.common.Translator;
 import dev.edu.ngochandev.sharedkernel.dto.res.SuccessResponseDto;
@@ -19,13 +19,15 @@ public class ProductController {
     private final ProductService productService;
     private final Translator translator;
 
-    @PostMapping("/options")
+    @PostMapping("/{id}/variations")
     @ResponseStatus(HttpStatus.CREATED)
-    public SuccessResponseDto<ProductOptionResponseDto> createProductOption(@RequestBody CreateProductOptionRequestDto req) {
-        return SuccessResponseDto.<ProductOptionResponseDto>builder()
+    public SuccessResponseDto<ProductVariantResponseDto> createProductVariant(
+            @PathVariable("id") String productId,
+            @RequestBody @Valid CreateProductVariantRequestDto req) {
+        return SuccessResponseDto.<ProductVariantResponseDto>builder()
                 .httpStatus(HttpStatus.CREATED)
-                .message(translator.translate("product.option.create.success"))
-                .data(productService.createProductOption(req))
+                .message(translator.translate("product.variant.create.success"))
+                .data(productService.createProductVariant(productId, req))
                 .build();
     }
 

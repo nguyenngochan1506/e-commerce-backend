@@ -12,7 +12,7 @@ public class SuccessResponseDto<T> {
 
     @Builder
     public SuccessResponseDto(HttpStatus httpStatus, String message, T data) {
-        this.status = httpStatus.name();
+        this.status = httpStatus.name().toLowerCase();
         this.message = message;
         this.data = data;
     }

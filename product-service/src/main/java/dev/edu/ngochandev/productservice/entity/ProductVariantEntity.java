@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "tbl_product_variants", schema = "product_schema")
 @Getter
 @Setter
-public class ProductVariant extends BaseEntity{
+public class ProductVariantEntity extends BaseEntity{
     @Column(name = "sku_code", nullable = false, unique = true)
     private String skuCode;
 
@@ -45,8 +45,8 @@ public class ProductVariant extends BaseEntity{
     @Column(name = "weight", nullable = false)
     private Double weight;
 
-    @Column(name = "demension", nullable = false)
-    private String demension;
+    @Column(name = "dimensions", nullable = false)
+    private String dimensions;
 
     @Column(name = "unit", nullable = false )
     private String unit;
@@ -55,13 +55,7 @@ public class ProductVariant extends BaseEntity{
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "tbl_products_option_values",
-            schema = "product_schema",
-            joinColumns = @JoinColumn(name = "product_variant_id"),
-            inverseJoinColumns = @JoinColumn(name = "option_value_id")
-    )
+    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<OptionValueEntity> optionValues = new HashSet<>();
 
     @Override
@@ -75,6 +69,9 @@ public class ProductVariant extends BaseEntity{
         }
         if(stock == null) {
             stock = 0;
+        }
+        if(currency == null) {
+            currency = MyCurrency.VND;
         }
     }
 }

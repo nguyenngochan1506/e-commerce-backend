@@ -40,7 +40,7 @@ public class ProductEntity extends BaseEntity{
     private CategoryEntity category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<ProductVariant> variants = new HashSet<>();
+    private Set<ProductVariantEntity> variants = new HashSet<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<ProductOptionEntity> options = new HashSet<>();

@@ -101,37 +101,8 @@ nó liên quan đến Product và các category con nên quất sau
 ### Product
 #### Flow:
 1. before creating a product, you need to create categories first.
-2. create options and option-value 
-3. create product
-4. create product variations with options and option-values
-
-#### 1. Create Options and Option Values
-POST `/api/v1/products/{id}/options`
-**Request Body:**
-```json
-{
-  "name": "Color",
-  "values": ["Red", "Blue", "Green"]
-}
-```
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Option created successfully",
-  "data": {
-    "id": "option-uuid-1",
-    "name": "Color",
-    "values": [
-      {"id":  "val-uuid-red", "value": "Red"},
-      {"id":  "val-uuid-blue", "value": "Blue"},
-      {"id":  "val-uuid-green", "value": "Green"}
-    ]
-  }
-}
-```
-
-
+2. create product with options and option-value
+3. create product variations with options and option-values
 
 #### 3. Create Product
 
@@ -140,8 +111,8 @@ POST `/api/v1/products`
 **Request Body:**
 ```json
 {
-  "name": "Iphone 20 Pro Max",
-  "description": "Tui bán Iphone 20 Pro Max", // optional
+  "name": "Iphone 20",
+  "description": "Tui bán Iphone 20", // optional
   "categoryId": "cate-id-1",
   "slug": "iphone-20-pro-max",
   "status": "PUBLISHED" // optional by default is "DRAFT",,
@@ -153,7 +124,8 @@ POST `/api/v1/products`
     {"key":  "resolution", "value": "Full HD"}
   ]
 }
-```
+````
+
 #### 4. Create Product Variation
 POST `/api/v1/products/{productId}/variations`
 
@@ -162,14 +134,19 @@ POST `/api/v1/products/{productId}/variations`
 {
   "sku": "IP20PM256",
   "name": "Iphone 20 Pro Max 256GB",
-  "description": "Tui bán Iphone 20 Pro Max 256GB", // optional
-  "status": "PUBLISHED", // optional by default is "DRAFT"
-  "price": 30000000, // in VND
-  "currency": "VND", // optional by default is "VND"
-  "stock": 20 // optional by default is 0,
-  "image_url": "http://example.com/iphone20promax256.jpg",
-  "isDefault": true // optional by default is false
-  "optionValueIds": ["val-uuid-promax", "val-uuid-256gb"] // array of option value ids
+  "status": "PUBLISHED",
+  "price": 30000000,
+  "currency": "VND",
+  "stock": 20,
+  "imageUrl": "http://example.com/iphone20promax256.jpg",
+  "isDefault": true,
+  "weight": 300,
+  "dimensions": "10x10x10",
+  "unit": "cái",
+  "options": [
+    {"name": "version", "value": "Pro Max"},
+    {"name": "storage", "value": "256GB"}
+  ]
 }
 ```
 
