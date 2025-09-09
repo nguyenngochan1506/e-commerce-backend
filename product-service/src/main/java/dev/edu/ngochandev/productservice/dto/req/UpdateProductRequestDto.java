@@ -3,10 +3,14 @@ package dev.edu.ngochandev.productservice.dto.req;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 @Getter
 @Setter
-public class UpdateCategoryRequestDto extends CreateCategoryRequestDto{
+@SuperBuilder
+@Jacksonized
+public class UpdateProductRequestDto extends CreateProductRequestDto {
     @NotBlank(message = "error.id.not-blank")
     private String id;
 }

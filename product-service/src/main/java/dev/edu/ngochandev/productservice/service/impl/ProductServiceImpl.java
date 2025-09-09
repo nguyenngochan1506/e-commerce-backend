@@ -4,6 +4,7 @@ import dev.edu.ngochandev.productservice.common.MyUtils;
 import dev.edu.ngochandev.productservice.common.ProductStatus;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
+import dev.edu.ngochandev.productservice.dto.req.UpdateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.*;
 import dev.edu.ngochandev.productservice.entity.*;
 import dev.edu.ngochandev.productservice.mapper.CategoryMapper;
@@ -17,6 +18,7 @@ import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
 import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -154,6 +156,39 @@ public class ProductServiceImpl implements ProductService {
                 .currentPage(page)
                 .items(productList)
                 .build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ProductResponseDto updateProduct(UpdateProductRequestDto req) {
+        ProductEntity productToUpdate = productRepository.findById(req.getId()).orElseThrow(() -> new ResourceNotFoundException("error.product-not-found"));
+
+        //check slug
+        if (StringUtils.hasText(req.getSlug()) && !productToUpdate.getSlug().equals(req.getSlug())) {
+            if (productRepository.existsBySlug(req.getSlug())) {
+                throw new DuplicateResourceException("error.slug-exists");
+            }
+            productToUpdate.setSlug(req.getSlug());
+        }
+        //check category
+        if (StringUtils.hasText(req.getCategoryId()) && !productToUpdate.getCategory().getId().equals(req.getCategoryId())) {
+            CategoryEntity newCategory = categoryRepository.findById(req.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("error.category.not-found"));
+            productToUpdate.setCategory(newCategory);
+        }
+        //update other fields
+        if (StringUtils.hasText(req.getName())) productToUpdate.setName(req.getName());
+        if (StringUtils.hasText(req.getDescription())) productToUpdate.setDescription(req.getDescription());
+        if (StringUtils.hasText(req.getThumbnail())) productToUpdate.setThumbnail(req.getThumbnail());
+        if (req.getStatus() != null) productToUpdate.setStatus(req.getStatus());
+        if (req.getAttributes() != null && !req.getAttributes().isEmpty()) productToUpdate.setAttributes(req.getAttributes());
+
+        ProductEntity updatedProduct = productRepository.save(productToUpdate);
+
+        ProductResponseDto responseDto = productMapper.toProductResponseDto(updatedProduct);
+        responseDto.setCategories(buildCategoryBreadcrumb(updatedProduct.getCategory()));
+
+        return responseDto;
     }
 
     private ProductEntity findProductById(String productId) {

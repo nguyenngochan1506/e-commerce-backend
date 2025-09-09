@@ -2,6 +2,7 @@ package dev.edu.ngochandev.productservice.controller;
 
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
+import dev.edu.ngochandev.productservice.dto.req.UpdateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductDetailResponse;
 import dev.edu.ngochandev.productservice.dto.res.ProductListResponseDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductResponseDto;
@@ -69,4 +70,13 @@ public class ProductController {
                 .build();
     }
 
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<ProductResponseDto> updateProduct(@RequestBody @Valid UpdateProductRequestDto req) {
+        return SuccessResponseDto.<ProductResponseDto>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("product.update.success"))
+                .data(productService.updateProduct(req))
+                .build();
+    }
 }

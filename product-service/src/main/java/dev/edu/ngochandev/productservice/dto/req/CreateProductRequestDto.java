@@ -4,14 +4,13 @@ import dev.edu.ngochandev.productservice.common.ProductAttributes;
 import dev.edu.ngochandev.productservice.common.ProductStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
-import java.util.Map;
 
-@Builder
+@SuperBuilder
 @Getter
 @Jacksonized
 public class CreateProductRequestDto {
