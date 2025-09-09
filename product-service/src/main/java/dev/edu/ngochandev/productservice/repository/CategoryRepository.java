@@ -29,4 +29,18 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, String
         SELECT * FROM category_path
         """, nativeQuery = true)
     List<CategoryEntity> findCategoryPathToRoot(@Param("categoryId") String categoryId);
+
+    @Query(value = """
+        WITH RECURSIVE category_tree AS (
+            SELECT id, slug
+            FROM product_schema.tbl_categories
+            WHERE slug = :slug
+            UNION ALL
+            SELECT c.id, c.slug
+            FROM product_schema.tbl_categories c
+            INNER JOIN category_tree ct ON c.parent_id = ct.id
+        )
+        SELECT slug FROM category_tree
+        """, nativeQuery = true)
+    List<String> findSlugAndDescendantSlugs(@Param("slug") String slug);
 }

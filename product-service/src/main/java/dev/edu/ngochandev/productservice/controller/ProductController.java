@@ -48,6 +48,20 @@ public class ProductController {
                 .data(productService.getListProducts(page, size, sort, search))
                 .build();
     }
+    @GetMapping("/category/{categorySlug}")
+    @ResponseStatus(HttpStatus.OK)//public endpoint
+    public SuccessResponseDto<PageResponseDto<ProductListResponseDto>> getListProducts(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+            @RequestParam(value = "sort", required = false, defaultValue = "id:desc") String sort ,
+            @RequestParam(value = "search", required = false, defaultValue = "") String search,
+            @PathVariable(value = "categorySlug", required = true) String categorySlug) {
+        return SuccessResponseDto.<PageResponseDto<ProductListResponseDto>>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("product.list.success"))
+                .data(productService.getListProductsByCategorySlug(categorySlug, page, size, sort, search))
+                .build();
+    }
 
     @PostMapping("/{id}/variants")
     @ResponseStatus(HttpStatus.CREATED)

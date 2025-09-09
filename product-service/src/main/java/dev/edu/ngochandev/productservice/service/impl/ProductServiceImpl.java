@@ -19,7 +19,6 @@ import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
 import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -193,6 +192,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ProductVariantResponseDto updateProductVariant(String productId, String variantId, UpdateProductVariantRequestDto req) {
         if (!productRepository.existsById(productId)) {
             throw new ResourceNotFoundException("error.product.not-found");
@@ -228,6 +228,37 @@ public class ProductServiceImpl implements ProductService {
         ProductVariantEntity updatedVariant = productVariantRepository.save(variantToUpdate);
 
         return productMapper.toProductVariantResponseDto(updatedVariant);
+    }
+
+    @Override
+    public PageResponseDto<ProductListResponseDto> getListProductsByCategorySlug(String categorySlug, Integer page, Integer size, String sort, String search) {
+        Pageable pageable = MyUtils.createPageable(page, size, sort);
+        List<String> allCategorySlugs = categoryRepository.findSlugAndDescendantSlugs(categorySlug);
+        if (allCategorySlugs.isEmpty()) {
+            throw new ResourceNotFoundException("error.category.not-found");
+        }
+
+        Page<ProductEntity> productPage;
+        if (StringUtils.hasText(search)) {
+            productPage = productRepository.searchInCategoryAndDescendants(search.toLowerCase(), allCategorySlugs, pageable);
+        } else {
+            productPage = productRepository.findByCategorySlugInAndStatus(allCategorySlugs, ProductStatus.PUBLISHED, pageable);
+        }
+
+        List<ProductListResponseDto> productList = productPage.getContent().stream()
+                .map(p -> {
+                    ProductListResponseDto dto = productMapper.toProductListResponseDto(p);
+                    dto.setCategories(buildCategoryBreadcrumb(p.getCategory()));
+                    return dto;
+                })
+                .toList();
+
+        return PageResponseDto.<ProductListResponseDto>builder()
+                .totalPages(productPage.getTotalPages())
+                .totalItems(productPage.getTotalElements())
+                .currentPage(page)
+                .items(productList)
+                .build();
     }
 
     private ProductEntity findProductById(String productId) {

@@ -22,4 +22,6 @@ public interface ProductService {
     ProductResponseDto updateProduct(String productId, UpdateProductRequestDto req);
 
     ProductVariantResponseDto updateProductVariant(String productId, String variantId, UpdateProductVariantRequestDto req);
+
+    PageResponseDto<ProductListResponseDto> getListProductsByCategorySlug(String categorySlug, Integer page, Integer size, String sort, String search);
 }
