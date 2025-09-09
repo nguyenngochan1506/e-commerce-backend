@@ -159,8 +159,8 @@ GET `/api/v1/products/{productId}` (public endpoint)
   "message": "Product retrieved successfully",
   "data": {
     "id": "product-id-1",
-    "name": "Iphone 20 Pro Max",
-    "description": "Tui bán Iphone 20 Pro Max",
+    "name": "Iphone 20",
+    "description": "Tui bán Iphone 20",
     "slug": "iphone-20-pro-max",
     "attributes": [
       {"key": "origin", "value": "USA"},
@@ -176,17 +176,27 @@ GET `/api/v1/products/{productId}` (public endpoint)
         "slug": "cate-phones",
         "level": 1,
         "parentId": null
-      },
-      {
-        "id": "cate-id-2",
-        "name": "Smartphones",
-        "thumbnail": "http://example.com/phone.jpg",
-        "slug": "smartphones",
-        "level": 2,
-        "parentId": "cate-id-1"
       }
     ],
-    "variations": [
+    "options": [
+      {
+        "name": "version",
+        "values": [
+          {"id": "val-uuid-promax", "value": "Pro Max"},
+          {"id": "val-uuid-pro", "value": "Pro"},
+          {"id": "val-uuid-norm", "value": "Normal"}
+        ]
+      },
+      {
+        "name": "storage",
+        "values": [
+          {"id": "val-uuid-256gb", "value": "256GB"},
+          {"id": "val-uuid-512gb", "value": "512GB"},
+          {"id": "val-uuid-1tb", "value": "1TB"}
+        ]
+      }
+    ],
+    "variants": [
       {
         "id": "variation-id-1",
         "sku": "IP20PM256",

@@ -2,12 +2,12 @@ package dev.edu.ngochandev.productservice.service.impl;
 
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
+import dev.edu.ngochandev.productservice.dto.res.CategoryResponseDto;
+import dev.edu.ngochandev.productservice.dto.res.ProductDetailResponse;
 import dev.edu.ngochandev.productservice.dto.res.ProductResponseDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductVariantResponseDto;
-import dev.edu.ngochandev.productservice.entity.OptionValueEntity;
-import dev.edu.ngochandev.productservice.entity.ProductEntity;
-import dev.edu.ngochandev.productservice.entity.ProductOptionEntity;
-import dev.edu.ngochandev.productservice.entity.ProductVariantEntity;
+import dev.edu.ngochandev.productservice.entity.*;
+import dev.edu.ngochandev.productservice.mapper.CategoryMapper;
 import dev.edu.ngochandev.productservice.mapper.ProductMapper;
 import dev.edu.ngochandev.productservice.repository.CategoryRepository;
 import dev.edu.ngochandev.productservice.repository.ProductOptionRepository;
@@ -20,6 +20,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -28,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductVariantRepository productVariantRepository;
     private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
+    private final CategoryMapper categoryMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -39,11 +44,14 @@ public class ProductServiceImpl implements ProductService {
 
         //map to entity
         ProductEntity product = productMapper.toProductEntity(req);
-        product.setCategory(categoryRepository.findById(req.getCategoryId()).get());
+        CategoryEntity directCategory = categoryRepository.findById(req.getCategoryId()).get();
+        product.setCategory(directCategory);
         //save to db
         product = productRepository.save(product);
+        ProductResponseDto responseDto = productMapper.toProductResponseDto(product);
+        responseDto.setCategories(buildCategoryBreadcrumb(directCategory));
 
-        return productMapper.toProductResponseDto(product);
+        return responseDto;
     }
 
     @Override
@@ -109,7 +117,27 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toProductVariantResponseDto(finalVariant);
     }
 
+    @Override
+    public ProductDetailResponse getProductDetail(String productId) {
+        ProductEntity product = this.findProductById(productId);
+
+        ProductDetailResponse response = productMapper.toProductDetailResponse(product);
+        response.setCategories(buildCategoryBreadcrumb(product.getCategory()));
+
+        return response;
+    }
+
     private ProductEntity findProductById(String productId) {
         return productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("error.product.not-found"));
+    }
+    private List<CategoryResponseDto> buildCategoryBreadcrumb(CategoryEntity category) {
+        List<CategoryResponseDto> breadcrumb = new ArrayList<>();
+        CategoryEntity currentCategory = category;
+        while (currentCategory != null) {
+            breadcrumb.add(categoryMapper.toFlatCategoryResponseDto(currentCategory));
+            currentCategory = currentCategory.getParent();
+        }
+        Collections.reverse(breadcrumb);
+        return breadcrumb;
     }
 }

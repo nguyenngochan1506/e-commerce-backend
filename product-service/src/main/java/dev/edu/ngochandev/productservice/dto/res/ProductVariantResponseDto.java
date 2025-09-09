@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Builder
 @Getter
@@ -21,4 +22,5 @@ public class ProductVariantResponseDto {
     private BigDecimal price;
     private MyCurrency currency;
     private ProductStatus status;
+    private List<String> optionValueIds;
 }
