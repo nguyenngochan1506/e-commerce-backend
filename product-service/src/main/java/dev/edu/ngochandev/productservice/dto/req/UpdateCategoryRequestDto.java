@@ -7,6 +7,4 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateCategoryRequestDto extends CreateCategoryRequestDto{
-    @NotBlank(message = "error.id.not-blank")
-    private String id;
 }

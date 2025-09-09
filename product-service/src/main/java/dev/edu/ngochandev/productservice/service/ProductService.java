@@ -3,6 +3,7 @@ package dev.edu.ngochandev.productservice.service;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.UpdateProductRequestDto;
+import dev.edu.ngochandev.productservice.dto.req.UpdateProductVariantRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductDetailResponse;
 import dev.edu.ngochandev.productservice.dto.res.ProductListResponseDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductResponseDto;
@@ -18,5 +19,7 @@ public interface ProductService {
 
     PageResponseDto<ProductListResponseDto> getListProducts(Integer page, Integer size, String sort, String search);
 
-    ProductResponseDto updateProduct( UpdateProductRequestDto req);
+    ProductResponseDto updateProduct(String productId, UpdateProductRequestDto req);
+
+    ProductVariantResponseDto updateProductVariant(String productId, String variantId, UpdateProductVariantRequestDto req);
 }

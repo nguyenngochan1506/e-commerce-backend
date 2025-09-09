@@ -69,9 +69,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CategoryResponseDto updateCategory(UpdateCategoryRequestDto req) {
+    public CategoryResponseDto updateCategory(String id, UpdateCategoryRequestDto req) {
         //check category exist
-        CategoryEntity categoryEntity = categoryRepository.findById(req.getId())
+        CategoryEntity categoryEntity = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.category.not-found"));
         //check name and slug exist
         if( req.getName() != null && !categoryEntity.getName().equals(req.getName()) && categoryRepository.existsByName((req.getName()))){

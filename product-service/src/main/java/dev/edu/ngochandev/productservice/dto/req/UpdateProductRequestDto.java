@@ -11,6 +11,4 @@ import lombok.extern.jackson.Jacksonized;
 @SuperBuilder
 @Jacksonized
 public class UpdateProductRequestDto extends CreateProductRequestDto {
-    @NotBlank(message = "error.id.not-blank")
-    private String id;
 }

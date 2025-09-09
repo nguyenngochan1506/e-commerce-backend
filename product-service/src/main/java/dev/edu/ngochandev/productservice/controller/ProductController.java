@@ -3,6 +3,7 @@ package dev.edu.ngochandev.productservice.controller;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.UpdateProductRequestDto;
+import dev.edu.ngochandev.productservice.dto.req.UpdateProductVariantRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductDetailResponse;
 import dev.edu.ngochandev.productservice.dto.res.ProductListResponseDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductResponseDto;
@@ -48,7 +49,7 @@ public class ProductController {
                 .build();
     }
 
-    @PostMapping("/{id}/variations")
+    @PostMapping("/{id}/variants")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponseDto<ProductVariantResponseDto> createProductVariant(
             @PathVariable("id") String productId,
@@ -70,13 +71,22 @@ public class ProductController {
                 .build();
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public SuccessResponseDto<ProductResponseDto> updateProduct(@RequestBody @Valid UpdateProductRequestDto req) {
+    public SuccessResponseDto<ProductResponseDto> updateProduct(@RequestBody @Valid UpdateProductRequestDto req, @PathVariable("id") String productId) {
         return SuccessResponseDto.<ProductResponseDto>builder()
                 .httpStatus(HttpStatus.OK)
                 .message(translator.translate("product.update.success"))
-                .data(productService.updateProduct(req))
+                .data(productService.updateProduct(productId, req))
+                .build();
+    }
+    @PatchMapping("/{productId}/variants/{variantId}")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<ProductVariantResponseDto> updateProductVariant(@RequestBody @Valid UpdateProductVariantRequestDto req, @PathVariable("productId") String productId, @PathVariable("variantId") String variantId) {
+        return SuccessResponseDto.<ProductVariantResponseDto>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("product.variant.update.success"))
+                .data(productService.updateProductVariant(productId, variantId, req))
                 .build();
     }
 }

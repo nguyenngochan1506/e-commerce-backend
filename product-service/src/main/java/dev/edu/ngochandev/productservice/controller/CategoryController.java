@@ -29,13 +29,13 @@ public class CategoryController {
                 .build();
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    SuccessResponseDto<CategoryResponseDto> updateCate(@RequestBody @Valid UpdateCategoryRequestDto req){
+    SuccessResponseDto<CategoryResponseDto> updateCate(@RequestBody @Valid UpdateCategoryRequestDto req, @PathVariable("id") String id){
         return SuccessResponseDto.<CategoryResponseDto>builder()
                 .httpStatus(HttpStatus.OK)
                 .message(translator.translate("category.update.success"))
-                .data(categoryService.updateCategory(req))
+                .data(categoryService.updateCategory(id, req))
                 .build();
     }
 

@@ -5,6 +5,7 @@ import dev.edu.ngochandev.productservice.common.ProductStatus;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.UpdateProductRequestDto;
+import dev.edu.ngochandev.productservice.dto.req.UpdateProductVariantRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.*;
 import dev.edu.ngochandev.productservice.entity.*;
 import dev.edu.ngochandev.productservice.mapper.CategoryMapper;
@@ -160,8 +161,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ProductResponseDto updateProduct(UpdateProductRequestDto req) {
-        ProductEntity productToUpdate = productRepository.findById(req.getId()).orElseThrow(() -> new ResourceNotFoundException("error.product-not-found"));
+    public ProductResponseDto updateProduct(String pId, UpdateProductRequestDto req) {
+        ProductEntity productToUpdate = productRepository.findById(pId).orElseThrow(() -> new ResourceNotFoundException("error.product-not-found"));
 
         //check slug
         if (StringUtils.hasText(req.getSlug()) && !productToUpdate.getSlug().equals(req.getSlug())) {
@@ -189,6 +190,44 @@ public class ProductServiceImpl implements ProductService {
         responseDto.setCategories(buildCategoryBreadcrumb(updatedProduct.getCategory()));
 
         return responseDto;
+    }
+
+    @Override
+    public ProductVariantResponseDto updateProductVariant(String productId, String variantId, UpdateProductVariantRequestDto req) {
+        if (!productRepository.existsById(productId)) {
+            throw new ResourceNotFoundException("error.product.not-found");
+        }
+        ProductVariantEntity variantToUpdate = productVariantRepository.findByProductIdAndId(productId, variantId)
+                .orElseThrow(() -> new ResourceNotFoundException("error.product.variant.not-found"));
+
+        if (StringUtils.hasText(req.getSku()) && !variantToUpdate.getSkuCode().equals(req.getSku())) {
+            if (productVariantRepository.existsBySkuCode(req.getSku())) {
+                throw new DuplicateResourceException("error.sku-exists");
+            }
+            variantToUpdate.setSkuCode(req.getSku());
+        }
+
+        if (StringUtils.hasText(req.getName())) variantToUpdate.setName(req.getName());
+        if (req.getPrice() != null) variantToUpdate.setPrice(req.getPrice());
+        if (req.getStock() != null) variantToUpdate.setStock(req.getStock());
+        if (StringUtils.hasText(req.getImageUrl()))  variantToUpdate.setImageUrl(req.getImageUrl());
+        if (req.getStatus() != null)  variantToUpdate.setStatus(req.getStatus());
+        if (req.getWeight() != null) variantToUpdate.setWeight(req.getWeight());
+        if (StringUtils.hasText(req.getDimensions())) variantToUpdate.setDimensions(req.getDimensions());
+        if (StringUtils.hasText(req.getUnit())) variantToUpdate.setUnit(req.getUnit());
+        if (req.getCurrency() != null) variantToUpdate.setCurrency(req.getCurrency());
+
+        if (req.getIsDefault() != null && req.getIsDefault()) {
+            productVariantRepository.findByProductId(productId).forEach(otherVariant -> {
+                if (!otherVariant.getId().equals(variantId)) {
+                    otherVariant.setIsDefault(false);
+                }
+            });
+            variantToUpdate.setIsDefault(true);
+        }
+        ProductVariantEntity updatedVariant = productVariantRepository.save(variantToUpdate);
+
+        return productMapper.toProductVariantResponseDto(updatedVariant);
     }
 
     private ProductEntity findProductById(String productId) {
