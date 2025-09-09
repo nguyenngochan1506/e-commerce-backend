@@ -22,8 +22,19 @@ public class ProductController {
     private final ProductService productService;
     private final Translator translator;
 
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)//public endpoint
+    public SuccessResponseDto<ProductDetailResponse> getProductDetail(@PathVariable("id") String productId) {
+        return SuccessResponseDto.<ProductDetailResponse>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("product.detail.success"))
+                .data(productService.getProductDetail(productId))
+                .build();
+    }
+
     @GetMapping()
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK)//public endpoint
     public SuccessResponseDto<PageResponseDto<ProductListResponseDto>> getListProducts(
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
@@ -58,13 +69,4 @@ public class ProductController {
                 .build();
     }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public SuccessResponseDto<ProductDetailResponse> getProductDetail(@PathVariable("id") String productId) {
-        return SuccessResponseDto.<ProductDetailResponse>builder()
-                .httpStatus(HttpStatus.OK)
-                .message(translator.translate("product.detail.success"))
-                .data(productService.getProductDetail(productId))
-                .build();
-    }
 }

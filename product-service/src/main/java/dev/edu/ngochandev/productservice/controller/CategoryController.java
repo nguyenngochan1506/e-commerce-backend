@@ -1,6 +1,7 @@
 package dev.edu.ngochandev.productservice.controller;
 
 import dev.edu.ngochandev.productservice.dto.req.CreateCategoryRequestDto;
+import dev.edu.ngochandev.productservice.dto.req.UpdateCategoryRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.CategoryResponseDto;
 import dev.edu.ngochandev.productservice.service.CategoryService;
 import dev.edu.ngochandev.sharedkernel.common.Translator;
@@ -25,6 +26,16 @@ public class CategoryController {
                 .httpStatus(HttpStatus.CREATED)
                 .message(translator.translate("category.create.success"))
                 .data(categoryService.createCategory(req))
+                .build();
+    }
+
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    SuccessResponseDto<CategoryResponseDto> updateCate(@RequestBody @Valid UpdateCategoryRequestDto req){
+        return SuccessResponseDto.<CategoryResponseDto>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("category.update.success"))
+                .data(categoryService.updateCategory(req))
                 .build();
     }
 
