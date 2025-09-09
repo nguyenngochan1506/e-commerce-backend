@@ -135,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
 
         Page<ProductEntity> productPage;
         if(StringUtils.hasLength(search)) {
-            productPage = productRepository.findProductWithSearch(search, pageable);
+            productPage = productRepository.findProductWithSearch(search.toLowerCase(), pageable);
         } else {
             productPage = productRepository.findAllByStatus(ProductStatus.PUBLISHED, pageable);
         }

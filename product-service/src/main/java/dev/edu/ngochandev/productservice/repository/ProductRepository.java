@@ -15,11 +15,13 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<ProductEntity, String> {
     boolean existsBySlug(String slug);
 
-    @Query("SELECT p FROM ProductEntity p JOIN p.category c JOIN p.variants v " +
-            "WHERE (:search LIKE CONCAT('%', LOWER(p.name), '%') OR " +
-            ":search LIKE CONCAT('%', LOWER(p.slug), '%') OR " +
-            ":search LIKE CONCAT('%', LOWER(c.name), '%') OR " +
-            ":search LIKE CONCAT('%', LOWER(v.skuCode), '%')) AND p.status = 'PUBLISHED'")
+    @Query("""
+        SELECT p FROM ProductEntity p JOIN p.category c JOIN p.variants v 
+                    WHERE (LOWER(p.name) LIKE CONCAT('%', LOWER(:search), '%') OR 
+                    LOWER(p.slug) LIKE CONCAT('%', LOWER(:search), '%') OR 
+                    LOWER(c.name) LIKE CONCAT('%', LOWER(:search), '%') OR 
+                    LOWER(v.skuCode) LIKE CONCAT('%', LOWER(:search), '%'))
+                    AND p.status = 'PUBLISHED' """)
     Page<ProductEntity> findProductWithSearch(@Param("search") String search, Pageable pageable);
 
     Page<ProductEntity> findAllByStatus(ProductStatus status, Pageable pageable);
