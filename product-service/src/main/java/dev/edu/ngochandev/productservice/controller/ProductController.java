@@ -3,10 +3,12 @@ package dev.edu.ngochandev.productservice.controller;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductDetailResponse;
+import dev.edu.ngochandev.productservice.dto.res.ProductListResponseDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductResponseDto;
 import dev.edu.ngochandev.productservice.dto.res.ProductVariantResponseDto;
 import dev.edu.ngochandev.productservice.service.ProductService;
 import dev.edu.ngochandev.sharedkernel.common.Translator;
+import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.sharedkernel.dto.res.SuccessResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,20 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     private final ProductService productService;
     private final Translator translator;
+
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<PageResponseDto<ProductListResponseDto>> getListProducts(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+            @RequestParam(value = "sort", required = false, defaultValue = "id:desc") String sort ,
+            @RequestParam(value = "search", required = false, defaultValue = "") String search) {
+        return SuccessResponseDto.<PageResponseDto<ProductListResponseDto>>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("product.list.success"))
+                .data(productService.getListProducts(page, size, sort, search))
+                .build();
+    }
 
     @PostMapping("/{id}/variations")
     @ResponseStatus(HttpStatus.CREATED)

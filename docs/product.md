@@ -249,10 +249,37 @@ GET `/api/v1/products` (public endpoint)
     "items": [
       {
         "id": "product-id-1",
-        "name": "Iphone 20 Pro Max",
-        "description": "Tui bán Iphone 20 Pro Max",
+        "name": "Iphone 20",
+        "description": "Tui bán Iphone 20",
         "slug": "iphone-20-pro-max",
-        "price": 30000000 // price of default variation
+        "attributes": [
+          {"key": "origin", "value": "USA"},
+          {"key":  "brand", "value": "Apple"},
+          {"key":  "release year", "value": "2024"},
+          {"key":  "resolution", "value": "Full HD"}
+        ],
+        "categories": [
+          {
+            "id": "cate-id-1",
+            "name": "Phones",
+            "thumbnail": "http://example.com/phone.jpg",
+            "slug": "cate-phones",
+            "level": 1,
+            "parentId": null
+          }
+        ],
+        "defaultVariant": {
+          "id": "variation-id-1",
+          "sku": "IP20PM256",
+          "name": "Iphone 20 Pro Max 256GB",
+          "description": "Tui bán Iphone 20 Pro Max 256GB",
+          "status": "PUBLISHED",
+          "price": 30000000,
+          "currency": "VND",
+          "stock": 20,
+          "isDefault": true,
+          "optionValueIds": ["val-uuid-promax", "val-uuid-256gb"]
+        }
       }
       //... more products
     ]

@@ -41,4 +41,17 @@ public interface ProductMapper {
                 .map(OptionValueEntity::getId)
                 .toList();
     }
+
+    @Mapping(source = "variants", target = "defaultVariant")
+    ProductListResponseDto toProductListResponseDto(ProductEntity productEntity);
+    default ProductVariantResponseDto mapDefaultVariant(Set<ProductVariantEntity> variants) {
+        if (variants == null || variants.isEmpty()) {
+            return null;
+        }
+        return variants.stream()
+                .filter(ProductVariantEntity::getIsDefault)
+                .findFirst()
+                .map(this::toProductVariantResponseDto)
+                .orElse(null);
+    }
 }

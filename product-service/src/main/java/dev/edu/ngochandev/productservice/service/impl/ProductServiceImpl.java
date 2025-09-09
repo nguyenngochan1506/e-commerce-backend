@@ -1,11 +1,10 @@
 package dev.edu.ngochandev.productservice.service.impl;
 
+import dev.edu.ngochandev.productservice.common.MyUtils;
+import dev.edu.ngochandev.productservice.common.ProductStatus;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductRequestDto;
 import dev.edu.ngochandev.productservice.dto.req.CreateProductVariantRequestDto;
-import dev.edu.ngochandev.productservice.dto.res.CategoryResponseDto;
-import dev.edu.ngochandev.productservice.dto.res.ProductDetailResponse;
-import dev.edu.ngochandev.productservice.dto.res.ProductResponseDto;
-import dev.edu.ngochandev.productservice.dto.res.ProductVariantResponseDto;
+import dev.edu.ngochandev.productservice.dto.res.*;
 import dev.edu.ngochandev.productservice.entity.*;
 import dev.edu.ngochandev.productservice.mapper.CategoryMapper;
 import dev.edu.ngochandev.productservice.mapper.ProductMapper;
@@ -14,13 +13,16 @@ import dev.edu.ngochandev.productservice.repository.ProductOptionRepository;
 import dev.edu.ngochandev.productservice.repository.ProductRepository;
 import dev.edu.ngochandev.productservice.repository.ProductVariantRepository;
 import dev.edu.ngochandev.productservice.service.ProductService;
+import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
 import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -127,17 +129,43 @@ public class ProductServiceImpl implements ProductService {
         return response;
     }
 
+    @Override
+    public PageResponseDto<ProductListResponseDto> getListProducts(Integer page, Integer size, String sort, String search) {
+        Pageable pageable = MyUtils.createPageable(page, size, sort);
+
+        Page<ProductEntity> productPage;
+        if(StringUtils.hasLength(search)) {
+            productPage = productRepository.findProductWithSearch(search, pageable);
+        } else {
+            productPage = productRepository.findAllByStatus(ProductStatus.PUBLISHED, pageable);
+        }
+
+        List<ProductListResponseDto> productList = productPage.getContent().stream()
+                .map(p -> {
+                    ProductListResponseDto dto = productMapper.toProductListResponseDto(p);
+                    dto.setCategories(buildCategoryBreadcrumb(p.getCategory()));
+                    return dto;
+                })
+                .toList();
+
+        return PageResponseDto.<ProductListResponseDto>builder()
+                .totalPages(productPage.getTotalPages())
+                .totalItems(productPage.getTotalElements())
+                .currentPage(page)
+                .items(productList)
+                .build();
+    }
+
     private ProductEntity findProductById(String productId) {
-        return productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("error.product.not-found"));
+        return productRepository.findByIdAndStatus(productId, ProductStatus.PUBLISHED).orElseThrow(() -> new ResourceNotFoundException("error.product.not-found"));
     }
     private List<CategoryResponseDto> buildCategoryBreadcrumb(CategoryEntity category) {
-        List<CategoryResponseDto> breadcrumb = new ArrayList<>();
-        CategoryEntity currentCategory = category;
-        while (currentCategory != null) {
-            breadcrumb.add(categoryMapper.toFlatCategoryResponseDto(currentCategory));
-            currentCategory = currentCategory.getParent();
-        }
-        Collections.reverse(breadcrumb);
-        return breadcrumb;
+        List<CategoryEntity> path = categoryRepository.findCategoryPathToRoot(category.getId());
+
+        Collections.reverse(path);
+
+        return path.stream()
+                .map(categoryMapper::toFlatCategoryResponseDto)
+                .toList();
     }
 }
