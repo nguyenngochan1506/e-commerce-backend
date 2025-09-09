@@ -25,13 +25,13 @@ public class ProductController {
     private final Translator translator;
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/{slug}")
     @ResponseStatus(HttpStatus.OK)//public endpoint
-    public SuccessResponseDto<ProductDetailResponse> getProductDetail(@PathVariable("id") String productId) {
+    public SuccessResponseDto<ProductDetailResponse> getProductDetail(@PathVariable("slug") String slug) {
         return SuccessResponseDto.<ProductDetailResponse>builder()
                 .httpStatus(HttpStatus.OK)
                 .message(translator.translate("product.detail.success"))
-                .data(productService.getProductDetail(productId))
+                .data(productService.getProductDetail(slug))
                 .build();
     }
 

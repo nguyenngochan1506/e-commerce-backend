@@ -90,7 +90,8 @@ public class ProductServiceImpl implements ProductService {
                             OptionValueEntity newValue = new OptionValueEntity();
                             newValue.setValue(optionDto.value());
                             newValue.setOption(optionEntity);
-                            newValue.setProductVariant(variant);
+
+                            optionEntity.getValues().add(newValue);
                             return newValue;
                         });
 
@@ -122,8 +123,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDetailResponse getProductDetail(String productId) {
-        ProductEntity product = this.findProductById(productId);
+    public ProductDetailResponse getProductDetail(String slug) {
+        ProductEntity product = productRepository.findBySlugAndStatus(slug, ProductStatus.PUBLISHED)
+                .orElseThrow(() -> new ResourceNotFoundException("error.product.not-found"));
 
         ProductDetailResponse response = productMapper.toProductDetailResponse(product);
         response.setCategories(buildCategoryBreadcrumb(product.getCategory()));

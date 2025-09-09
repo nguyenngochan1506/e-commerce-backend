@@ -55,7 +55,13 @@ public class ProductVariantEntity extends BaseEntity{
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 
-    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "tbl_product_variant_option_values",
+            schema = "product_schema",
+            joinColumns = @JoinColumn(name = "product_variant_id"),
+            inverseJoinColumns = @JoinColumn(name = "option_value_id")
+    )
     private Set<OptionValueEntity> optionValues = new HashSet<>();
 
     @Override

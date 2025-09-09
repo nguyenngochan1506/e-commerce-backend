@@ -47,4 +47,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, String> 
     Optional<ProductEntity> findByIdAndStatus(String id, ProductStatus status);
 
     Page<ProductEntity> findByCategorySlugInAndStatus(List<String> categorySlugs, ProductStatus status, Pageable pageable);
+
+    Optional<ProductEntity> findBySlugAndStatus(String slug, ProductStatus status);
 }

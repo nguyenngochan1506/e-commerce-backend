@@ -17,6 +17,5 @@ public class OptionValueEntity extends BaseEntity {
     private ProductOptionEntity option;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_variant_id", nullable = false)
     private ProductVariantEntity productVariant;
 }

@@ -15,7 +15,7 @@ public interface ProductService {
 
     ProductVariantResponseDto createProductVariant(String productId,CreateProductVariantRequestDto req);
 
-    ProductDetailResponse getProductDetail(String productId);
+    ProductDetailResponse getProductDetail(String slug);
 
     PageResponseDto<ProductListResponseDto> getListProducts(Integer page, Integer size, String sort, String search);
 
