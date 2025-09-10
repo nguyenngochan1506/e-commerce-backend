@@ -20,6 +20,6 @@ public class OptionValueEntity extends BaseEntity {
     @JoinColumn(name = "option_id", nullable = false)
     private ProductOptionEntity option;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "optionValues")
     private Set<ProductVariantEntity> productVariant = new HashSet<>();
 }

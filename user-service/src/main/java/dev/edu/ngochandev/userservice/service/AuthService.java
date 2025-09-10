@@ -1,8 +1,8 @@
 package dev.edu.ngochandev.userservice.service;
 
 import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
-import dev.edu.ngochandev.userservice.dto.res.UserResponseDto;
+import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
 
 public interface AuthService {
-    UserResponseDto register(RegisterUserRequestDto req);
+    TokenResponseDto register(RegisterUserRequestDto req);
 }
