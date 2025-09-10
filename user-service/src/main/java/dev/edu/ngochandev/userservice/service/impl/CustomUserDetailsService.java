@@ -18,11 +18,8 @@ import java.util.Set;
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByIdentifier(username)
+    public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByIdentifier(username)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.not-found"));
-        Set<GrantedAuthority> authorities = Set.of(new SimpleGrantedAuthority("ROLE_NORMAL"), new SimpleGrantedAuthority("ROLE_ADMIN"));
-
-        return new User(username, user.getPassword(), authorities);
     }
 }

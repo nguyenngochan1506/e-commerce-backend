@@ -6,14 +6,19 @@ import dev.edu.ngochandev.userservice.common.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_users", schema = "user_schema")
 @Getter
 @Setter
-public class UserEntity extends BaseEntity {
+public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
@@ -52,5 +57,10 @@ public class UserEntity extends BaseEntity {
         if(gender == null) {
             gender = Gender.UNKNOWN;
         }
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
 }

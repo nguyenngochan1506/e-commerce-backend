@@ -64,6 +64,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UnauthorizedException("error.invalid.credentials"));
 
         if(!passwordEncoder.matches(req.getPassword(), user.getPassword())) throw new UnauthorizedException("error.invalid.credentials");
+        //TODO: check user status
 
         String accessToken = jwtService.generateToken(user, TokenType.ACCESS);
         String refreshToken = jwtService.generateToken(user, TokenType.REFRESH);
