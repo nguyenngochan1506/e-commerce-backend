@@ -2,6 +2,7 @@ package dev.edu.ngochandev.userservice.service.impl;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import dev.edu.ngochandev.sharedkernel.exception.UnauthorizedException;
@@ -77,12 +78,31 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean validateToken(String token, TokenType type) {
-        return false;
+        return switch (type){
+            case ACCESS -> validateToken(token, accessTokenSecretKey);
+            case REFRESH -> validateToken(token, refreshTokenSecretKey);
+            case EMAIL_VERIFICATION -> validateToken(token, verifyEmailTokenSecretKey);
+            case PASSWORD_RESET -> validateToken(token, resetPasswordTokenSecretKey);
+        };
+    }
+    private boolean validateToken(String token, String secretKey) {
+        try{
+            JWSVerifier verifier = new MACVerifier(secretKey);
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
+            return signedJWT.verify(verifier) && expiration.after(new Date());
+        }catch (JOSEException | ParseException e) {
+            throw new UnauthorizedException("error.token.invalid");
+        }
     }
 
     @Override
     public String extractUsername(String token) {
-        return "";
+        try {
+            return SignedJWT.parse(token).getJWTClaimsSet().getStringClaim("username");
+        } catch (ParseException e) {
+            throw new UnauthorizedException("error.token.invalid");
+        }
     }
 
     @Override

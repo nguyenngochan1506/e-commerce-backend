@@ -1,6 +1,7 @@
 package dev.edu.ngochandev.userservice.service.impl;
 
 import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
+import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import dev.edu.ngochandev.sharedkernel.exception.UnauthorizedException;
 import dev.edu.ngochandev.userservice.common.TokenType;
 import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
@@ -11,10 +12,16 @@ import dev.edu.ngochandev.userservice.repository.UserRepository;
 import dev.edu.ngochandev.userservice.service.AuthService;
 import dev.edu.ngochandev.userservice.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -68,5 +75,6 @@ public class AuthServiceImpl implements AuthService {
                 .expirationTime(accessTokenExpiresIn)
                 .build();
     }
+
 
 }
