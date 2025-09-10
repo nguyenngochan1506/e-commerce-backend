@@ -13,7 +13,11 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final String[] publicEndpoints = {
             "/api/v1/auth/login",
-            "/api/v1/auth/register"
+            "/api/v1/auth/register",
+            "/api/v1/categories",
+            "/api/v1/products/*",
+            "/api/v1/products",
+            "/api/v1/products/category/*"
     };
 
     @Bean
@@ -27,6 +31,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);

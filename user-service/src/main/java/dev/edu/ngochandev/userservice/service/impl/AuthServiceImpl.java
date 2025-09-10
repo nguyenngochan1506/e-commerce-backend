@@ -1,21 +1,28 @@
 package dev.edu.ngochandev.userservice.service.impl;
 
 import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
+import dev.edu.ngochandev.sharedkernel.exception.UnauthorizedException;
+import dev.edu.ngochandev.userservice.common.TokenType;
 import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
 import dev.edu.ngochandev.userservice.entity.UserEntity;
 import dev.edu.ngochandev.userservice.repository.UserRepository;
 import dev.edu.ngochandev.userservice.service.AuthService;
+import dev.edu.ngochandev.userservice.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
 
     @Override
     public TokenResponseDto register(RegisterUserRequestDto req) {
@@ -40,16 +47,26 @@ public class AuthServiceImpl implements AuthService {
         return TokenResponseDto.builder()
                 .accessToken("dummy-access-token")
                 .refreshToken("dummy-refresh-token")
-                .accessTokenExpiresIn(123455678L)
+                .expirationTime(null)
                 .build();
     }
 
     @Override
     public TokenResponseDto authenticate(LoginRequestDto req) {
+        UserEntity user = userRepository.findByIdentifier(req.getIdentifier())
+                .orElseThrow(() -> new UnauthorizedException("error.invalid.credentials"));
+
+        if(!passwordEncoder.matches(req.getPassword(), user.getPassword())) throw new UnauthorizedException("error.invalid.credentials");
+
+        String accessToken = jwtService.generateToken(user, TokenType.ACCESS);
+        String refreshToken = jwtService.generateToken(user, TokenType.REFRESH);
+        Date accessTokenExpiresIn = jwtService.extractExpiration(accessToken);
+
         return TokenResponseDto.builder()
-                .accessToken("dummy-access-token")
-                .refreshToken("dummy-refresh-token")
-                .accessTokenExpiresIn(123455678L)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .expirationTime(accessTokenExpiresIn)
                 .build();
     }
+
 }

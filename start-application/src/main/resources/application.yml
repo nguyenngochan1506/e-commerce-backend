@@ -16,3 +16,20 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+
+app:
+  jwt:
+    issuer: ngochandev
+    access-token:
+      secret: 8f2e7c3b5f1a4e6b9c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b
+      expiration: 3600 # 1 hour (in seconds)
+    refresh-token:
+      secret: 1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1e2f
+      expiration: 604800 # 7 days (in seconds)
+    verification-token:
+      secret: f1e2d3c4b5a697887766554433221100ffeeddccbbaa99887766554433221100
+      expiration: 86400 # 24 hours (in seconds)
+    reset-password-token:
+      secret: 01f2e3d4c5b6a79887766554433221100ffeeddccbbaa99887766554433221100
+      expiration: 900 # 15 minutes (in seconds)

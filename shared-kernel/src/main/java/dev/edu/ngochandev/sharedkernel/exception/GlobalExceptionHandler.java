@@ -60,6 +60,12 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST, translator.translate("error.enum.invalid") + " " + message, req);
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponseDto handleUnauthorizedException(UnauthorizedException ex, WebRequest req) {
+        return new ErrorResponseDto(HttpStatus.UNAUTHORIZED, translator.translate(ex.getMessage()), req);
+    }
+
     @ExceptionHandler(DuplicateResourceException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponseDto handleDuplicateResourceException(DuplicateResourceException ex, WebRequest req) {
