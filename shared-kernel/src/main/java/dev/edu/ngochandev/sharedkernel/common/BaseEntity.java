@@ -1,4 +1,4 @@
-package dev.edu.ngochandev.productservice.entity;
+package dev.edu.ngochandev.sharedkernel.common;
 
 import jakarta.persistence.*;
 import lombok.Getter;

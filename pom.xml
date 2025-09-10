@@ -12,6 +12,7 @@
         <module>start-application</module>
         <module>product-service</module>
         <module>shared-kernel</module>
+        <module>user-service</module>
     </modules>
 
     <properties>

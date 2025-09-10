@@ -1,4 +1,4 @@
-package dev.edu.ngochandev.productservice.config;
+package dev.edu.ngochandev.sharedkernel.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ public class LocalResolver extends AcceptHeaderLocaleResolver implements WebMvcC
     @Bean
     public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasenames("messages_product", "messages_common");
+        messageSource.setBasenames("messages_user", "messages_product", "messages_common");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setCacheSeconds(3600);
         return messageSource;

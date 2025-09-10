@@ -1,5 +1,6 @@
 package dev.edu.ngochandev.productservice.entity;
 
+import dev.edu.ngochandev.sharedkernel.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @SQLRestriction("is_deleted = false")
-public class CategoryEntity extends BaseEntity{
+public class CategoryEntity extends BaseEntity {
     @Column(name = "name", nullable = false, length = 255, unique = true)
     private String name;
 

@@ -12,6 +12,12 @@
     <artifactId>start-application</artifactId>
 
     <dependencies>
+<!--        User service-->
+        <dependency>
+            <groupId>dev.edu.ngochandev</groupId>
+            <artifactId>user-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 <!--        Product service-->
         <dependency>
             <groupId>dev.edu.ngochandev</groupId>
@@ -23,6 +29,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+<!--        check heath-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
+
+    <build>
+
+    </build>
 
 </project>

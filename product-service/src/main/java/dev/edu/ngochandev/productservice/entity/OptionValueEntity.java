@@ -1,5 +1,6 @@
 package dev.edu.ngochandev.productservice.entity;
 
+import dev.edu.ngochandev.sharedkernel.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

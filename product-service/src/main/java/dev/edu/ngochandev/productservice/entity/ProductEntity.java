@@ -2,6 +2,7 @@ package dev.edu.ngochandev.productservice.entity;
 
 import dev.edu.ngochandev.productservice.common.ProductAttributes;
 import dev.edu.ngochandev.productservice.common.ProductStatus;
+import dev.edu.ngochandev.sharedkernel.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.util.*;
 @Table(name = "tbl_products", schema = "product_schema")
 @Getter
 @Setter
-public class ProductEntity extends BaseEntity{
+public class ProductEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
