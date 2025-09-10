@@ -60,3 +60,12 @@ The User Service is responsible for managing user accounts, including registrati
   "avatar": "string"  //optional
 }
 ```
+
+- Endpoint: `POST /api/v1/auth/login`
+**Request Body**
+```json
+{
+  "identifier": "string", // username or email
+  "password": "string"
+}
+```

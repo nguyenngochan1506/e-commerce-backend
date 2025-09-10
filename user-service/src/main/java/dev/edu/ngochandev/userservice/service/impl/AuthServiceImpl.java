@@ -1,18 +1,21 @@
 package dev.edu.ngochandev.userservice.service.impl;
 
 import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
+import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
 import dev.edu.ngochandev.userservice.entity.UserEntity;
 import dev.edu.ngochandev.userservice.repository.UserRepository;
 import dev.edu.ngochandev.userservice.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public TokenResponseDto register(RegisterUserRequestDto req) {
@@ -23,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
         userEntity.setUsername(req.getUsername());
         userEntity.setEmail(req.getEmail());
         userEntity.setPhoneNumber(req.getPhoneNumber());
-        userEntity.setPassword(req.getPassword());  // TODO: hash password
+        userEntity.setPassword(passwordEncoder.encode(req.getPassword()));
         userEntity.setGender(req.getGender());
         userEntity.setDateOfBirth(req.getDateOfBirth());
         userEntity.setAvatar(req.getAvatar());
@@ -41,5 +44,12 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-
+    @Override
+    public TokenResponseDto authenticate(LoginRequestDto req) {
+        return TokenResponseDto.builder()
+                .accessToken("dummy-access-token")
+                .refreshToken("dummy-refresh-token")
+                .accessTokenExpiresIn(123455678L)
+                .build();
+    }
 }

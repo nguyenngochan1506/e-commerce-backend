@@ -2,6 +2,7 @@ package dev.edu.ngochandev.userservice.controller;
 
 import dev.edu.ngochandev.sharedkernel.common.Translator;
 import dev.edu.ngochandev.sharedkernel.dto.res.SuccessResponseDto;
+import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
 import dev.edu.ngochandev.userservice.service.AuthService;
@@ -24,6 +25,16 @@ public class AuthController {
                 .message(translator.translate("user.register.success"))
                 .httpStatus(HttpStatus.CREATED)
                 .data(authService.register(registerUserRequestDto))
+                .build();
+    }
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<TokenResponseDto> login(@RequestBody @Valid LoginRequestDto req) {
+        return SuccessResponseDto.<TokenResponseDto>builder()
+                .message(translator.translate("user.login.success"))
+                .httpStatus(HttpStatus.OK)
+                .data(authService.authenticate(req))
                 .build();
     }
 }
