@@ -90,8 +90,7 @@ public class ProductServiceImpl implements ProductService {
                             OptionValueEntity newValue = new OptionValueEntity();
                             newValue.setValue(optionDto.value());
                             newValue.setOption(optionEntity);
-
-                            optionEntity.getValues().add(newValue);
+//                            optionEntity.getValues().add(newValue);
                             return newValue;
                         });
 
