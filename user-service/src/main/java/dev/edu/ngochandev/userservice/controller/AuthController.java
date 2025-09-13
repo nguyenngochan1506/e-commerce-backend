@@ -2,10 +2,7 @@ package dev.edu.ngochandev.userservice.controller;
 
 import dev.edu.ngochandev.sharedkernel.common.Translator;
 import dev.edu.ngochandev.sharedkernel.dto.res.SuccessResponseDto;
-import dev.edu.ngochandev.userservice.dto.req.ChangePasswordRequestDto;
-import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
-import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
-import dev.edu.ngochandev.userservice.dto.req.TokenRequestDto;
+import dev.edu.ngochandev.userservice.dto.req.*;
 import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
 import dev.edu.ngochandev.userservice.entity.UserEntity;
 import dev.edu.ngochandev.userservice.service.AuthService;
@@ -22,6 +19,25 @@ public class AuthController {
     private final AuthService authService;
     private final Translator translator;
 
+    @PostMapping("/reset-password")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<String> resetPassword(@RequestBody @Valid ResetPasswordRequestDto req) {
+        return SuccessResponseDto.<String>builder()
+                .message(translator.translate("user.reset-password.success"))
+                .httpStatus(HttpStatus.OK)
+                .data(authService.resetPassword(req))
+                .build();
+    }
+
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<String> forgotPassword(@RequestBody @Valid ForgotPasswordRequestDto req) {
+        return SuccessResponseDto.<String>builder()
+                .message(translator.translate("user.forgot-password.success"))
+                .httpStatus(HttpStatus.OK)
+                .data(authService.forgotPassword(req))
+                .build();
+    }
 
     @PatchMapping("/change-password")
     @ResponseStatus(HttpStatus.OK)

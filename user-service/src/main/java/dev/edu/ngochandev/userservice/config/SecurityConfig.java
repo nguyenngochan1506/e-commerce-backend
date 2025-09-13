@@ -23,6 +23,8 @@ public class SecurityConfig {
             "/api/v1/products",
             "/api/v1/products/category/*",
             "/api/v1/auth/verify-email",
+            "/api/v1/auth/forgot-password",
+            "/api/v1/auth/reset-password"
     };
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;

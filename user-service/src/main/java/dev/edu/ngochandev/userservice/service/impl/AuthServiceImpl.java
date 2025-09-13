@@ -5,10 +5,7 @@ import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import dev.edu.ngochandev.sharedkernel.exception.UnauthorizedException;
 import dev.edu.ngochandev.userservice.common.TokenType;
 import dev.edu.ngochandev.userservice.common.UserStatus;
-import dev.edu.ngochandev.userservice.dto.req.ChangePasswordRequestDto;
-import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
-import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
-import dev.edu.ngochandev.userservice.dto.req.TokenRequestDto;
+import dev.edu.ngochandev.userservice.dto.req.*;
 import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
 import dev.edu.ngochandev.userservice.entity.UserEntity;
 import dev.edu.ngochandev.userservice.repository.UserRepository;
@@ -120,6 +117,31 @@ public class AuthServiceImpl implements AuthService {
 
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepository.save(user);
+        return user.getId();
+    }
+
+    @Override
+    public String forgotPassword(ForgotPasswordRequestDto req) {
+        UserEntity user = userRepository.findByIdentifier(req.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.not-found"));
+
+        String resetToken = jwtService.generateToken(user, TokenType.PASSWORD_RESET);
+        //TODO: send reset email with the token
+
+        return resetToken;
+    }
+
+    @Override
+    public String resetPassword(ResetPasswordRequestDto req) {
+        String token = req.getToken();
+        if(!jwtService.validateToken(token, TokenType.PASSWORD_RESET)) throw new UnauthorizedException("error.token.invalid");
+        String username = jwtService.extractUsername(token);
+        UserEntity user = userRepository.findByIdentifier(username)
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.not-found"));
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+        jwtService.disableToken(token);
+
         return user.getId();
     }
 }
