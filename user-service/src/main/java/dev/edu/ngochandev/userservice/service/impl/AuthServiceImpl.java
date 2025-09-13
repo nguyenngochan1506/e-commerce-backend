@@ -5,6 +5,7 @@ import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import dev.edu.ngochandev.sharedkernel.exception.UnauthorizedException;
 import dev.edu.ngochandev.userservice.common.TokenType;
 import dev.edu.ngochandev.userservice.common.UserStatus;
+import dev.edu.ngochandev.userservice.dto.req.ChangePasswordRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.TokenRequestDto;
@@ -111,5 +112,14 @@ public class AuthServiceImpl implements AuthService {
     public String logout(String token) {
         jwtService.disableToken(token);
         return jwtService.extractJti(token);
+    }
+
+    @Override
+    public String changePassword(UserEntity user, ChangePasswordRequestDto req) {
+        if(!passwordEncoder.matches(req.getOldPassword(), user.getPassword())) throw new UnauthorizedException("error.password.invalid");
+
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+        return user.getId();
     }
 }

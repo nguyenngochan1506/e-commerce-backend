@@ -2,6 +2,7 @@ package dev.edu.ngochandev.userservice.controller;
 
 import dev.edu.ngochandev.sharedkernel.common.Translator;
 import dev.edu.ngochandev.sharedkernel.dto.res.SuccessResponseDto;
+import dev.edu.ngochandev.userservice.dto.req.ChangePasswordRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.TokenRequestDto;
@@ -20,6 +21,17 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
     private final Translator translator;
+
+
+    @PatchMapping("/change-password")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<String> changePassword(@AuthenticationPrincipal UserEntity user, @RequestBody @Valid ChangePasswordRequestDto req) {
+        return SuccessResponseDto.<String>builder()
+                .message(translator.translate("user.change-password.success"))
+                .httpStatus(HttpStatus.OK)
+                .data(authService.changePassword(user, req))
+                .build();
+    }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
