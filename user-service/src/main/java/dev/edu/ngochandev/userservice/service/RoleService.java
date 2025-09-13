@@ -11,4 +11,6 @@ public interface RoleService {
     String deleteRole(String roleId);
 
     PageResponseDto<PermissionResponseDto> getAllPermissions();
+
+    PageResponseDto<RoleResponseDto> getAllRoles(Integer page, Integer size, String sort, String search);
 }

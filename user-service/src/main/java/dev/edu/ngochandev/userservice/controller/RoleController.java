@@ -1,6 +1,7 @@
 package dev.edu.ngochandev.userservice.controller;
 
 import dev.edu.ngochandev.sharedkernel.common.Translator;
+import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.sharedkernel.dto.res.SuccessResponseDto;
 import dev.edu.ngochandev.userservice.dto.req.CreateRoleRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.RoleResponseDto;
@@ -34,6 +35,21 @@ public class RoleController {
                 .httpStatus(HttpStatus.OK)
                 .message(translator.translate("role.delete.success"))
                 .data(roleService.deleteRole(roleId))
+                .build();
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<PageResponseDto<RoleResponseDto>> getAllRoles(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+            @RequestParam(value = "sort", required = false, defaultValue = "id:desc") String sort ,
+            @RequestParam(value = "search", required = false, defaultValue = "") String search
+    ){
+        return SuccessResponseDto.<PageResponseDto<RoleResponseDto>>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("role.get.all.success"))
+                .data(roleService.getAllRoles(page, size, sort, search))
                 .build();
     }
 }
