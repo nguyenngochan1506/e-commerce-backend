@@ -13,5 +13,7 @@ public interface AuthService {
 
     String verifyEmail(TokenRequestDto token);
 
-    TokenResponseDto refreshToken(UserEntity user, String accessToken, String refreshToken);
+    TokenResponseDto refreshToken(UserEntity user, String refreshToken);
+
+    String logout(String token);
 }

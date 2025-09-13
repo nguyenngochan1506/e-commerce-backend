@@ -43,12 +43,22 @@ public class AuthController {
 
     @PostMapping("/refresh")
     @ResponseStatus(HttpStatus.OK)
-    public SuccessResponseDto<TokenResponseDto> refreshToken(@AuthenticationPrincipal UserEntity user, @RequestHeader("Authorization") String authorizationHeader, @RequestBody @Valid TokenRequestDto req) {
-        String accessToken = authorizationHeader.replace("Bearer ", "");
+    public SuccessResponseDto<TokenResponseDto> refreshToken(@AuthenticationPrincipal UserEntity user, @RequestBody @Valid TokenRequestDto req) {
         return SuccessResponseDto.<TokenResponseDto>builder()
                 .message(translator.translate("user.token.refresh.success"))
                 .httpStatus(HttpStatus.OK)
-                .data(authService.refreshToken(user, accessToken, req.getToken()))
+                .data(authService.refreshToken(user, req.getToken()))
+                .build();
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        return SuccessResponseDto.<String>builder()
+                .message(translator.translate("user.logout.success"))
+                .httpStatus(HttpStatus.OK)
+                .data(authService.logout(token))
                 .build();
     }
 

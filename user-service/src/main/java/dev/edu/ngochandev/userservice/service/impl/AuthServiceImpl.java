@@ -91,14 +91,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenResponseDto refreshToken(UserEntity user, String accessToken, String refreshToken) {
+    public TokenResponseDto refreshToken(UserEntity user, String refreshToken) {
         //create new access token and refresh token
         String newAccessToken = jwtService.generateToken(user, TokenType.ACCESS);
         String newRefreshToken = jwtService.generateToken(user, TokenType.REFRESH);
         Date accessTokenExpiresIn = jwtService.extractExpiration(newAccessToken);
 
-        //disable old refresh token and access token
-        jwtService.disableToken(accessToken);
+        //disable old refresh token
         jwtService.disableToken(refreshToken);
 
         return TokenResponseDto.builder()
@@ -106,5 +105,11 @@ public class AuthServiceImpl implements AuthService {
                 .refreshToken(newRefreshToken)
                 .expirationTime(accessTokenExpiresIn)
                 .build();
+    }
+
+    @Override
+    public String logout(String token) {
+        jwtService.disableToken(token);
+        return jwtService.extractJti(token);
     }
 }
