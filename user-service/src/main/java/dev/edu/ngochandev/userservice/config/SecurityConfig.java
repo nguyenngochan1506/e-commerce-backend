@@ -21,7 +21,8 @@ public class SecurityConfig {
             "/api/v1/categories",
             "/api/v1/products/*",
             "/api/v1/products",
-            "/api/v1/products/category/*"
+            "/api/v1/products/category/*",
+            "/api/v1/auth/verify-email",
     };
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;

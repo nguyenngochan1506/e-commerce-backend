@@ -15,7 +15,6 @@ The User Service is responsible for managing user accounts, including registrati
 - `POST /api/v1/auth/refresh`: Refresh the JWT token
 - `POST /api/v1/auth/forgot-password`: Initiate password reset process
 - `POST /api/v1/auth/reset-password`: Reset user password
-- `GET /api/v1/auth/me`: Get current user details
 - `PATCH /api/v1/auth/change-password`: Change user password
 - `POST /api/v1/auth/verify-email`: Verify user email address
 

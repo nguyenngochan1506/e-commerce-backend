@@ -4,24 +4,20 @@ import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
 import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import dev.edu.ngochandev.sharedkernel.exception.UnauthorizedException;
 import dev.edu.ngochandev.userservice.common.TokenType;
+import dev.edu.ngochandev.userservice.common.UserStatus;
 import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
+import dev.edu.ngochandev.userservice.dto.req.TokenRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
 import dev.edu.ngochandev.userservice.entity.UserEntity;
 import dev.edu.ngochandev.userservice.repository.UserRepository;
 import dev.edu.ngochandev.userservice.service.AuthService;
 import dev.edu.ngochandev.userservice.service.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -48,11 +44,10 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(userEntity);
 
 //        TODO: send verification email
-
-//        TODO: generate JWT token
+        String verificationToken = jwtService.generateToken(userEntity, TokenType.EMAIL_VERIFICATION);
 
         return TokenResponseDto.builder()
-                .accessToken("dummy-access-token")
+                .accessToken(verificationToken)
                 .refreshToken("dummy-refresh-token")
                 .expirationTime(null)
                 .build();
@@ -64,7 +59,8 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UnauthorizedException("error.invalid.credentials"));
 
         if(!passwordEncoder.matches(req.getPassword(), user.getPassword())) throw new UnauthorizedException("error.invalid.credentials");
-        //TODO: check user status
+        if(user.getStatus() == UserStatus.INACTIVE) throw new UnauthorizedException("error.user.inactive");
+        if(user.getStatus() == UserStatus.BLOCKED) throw new UnauthorizedException("error.user.blocked");
 
         String accessToken = jwtService.generateToken(user, TokenType.ACCESS);
         String refreshToken = jwtService.generateToken(user, TokenType.REFRESH);
@@ -77,5 +73,19 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Override
+    public String verifyEmail(TokenRequestDto req) {
+        String token = req.getToken();
+        if(!jwtService.validateToken(token, TokenType.EMAIL_VERIFICATION)) throw new UnauthorizedException("error.token.invalid");
 
+        String username = jwtService.extractUsername(token);
+        UserEntity user = userRepository.findByIdentifier(username)
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.not-found"));
+
+        if(user.getStatus() == UserStatus.ACTIVE) throw new UnauthorizedException("error.user.already-verified");
+        user.setStatus(UserStatus.ACTIVE);
+        userRepository.save(user);
+
+        return user.getId();
+    }
 }
