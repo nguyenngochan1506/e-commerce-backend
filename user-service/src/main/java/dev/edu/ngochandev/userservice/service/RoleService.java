@@ -2,6 +2,7 @@ package dev.edu.ngochandev.userservice.service;
 
 import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.userservice.dto.req.CreateRoleRequestDto;
+import dev.edu.ngochandev.userservice.dto.req.UpdateRoleRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.PermissionResponseDto;
 import dev.edu.ngochandev.userservice.dto.res.RoleResponseDto;
 
@@ -13,4 +14,6 @@ public interface RoleService {
     PageResponseDto<PermissionResponseDto> getAllPermissions();
 
     PageResponseDto<RoleResponseDto> getAllRoles(Integer page, Integer size, String sort, String search);
+
+    RoleResponseDto updateRole(String roleId, UpdateRoleRequestDto req);
 }

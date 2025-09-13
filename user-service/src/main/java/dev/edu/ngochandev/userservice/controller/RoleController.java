@@ -4,6 +4,7 @@ import dev.edu.ngochandev.sharedkernel.common.Translator;
 import dev.edu.ngochandev.sharedkernel.dto.res.PageResponseDto;
 import dev.edu.ngochandev.sharedkernel.dto.res.SuccessResponseDto;
 import dev.edu.ngochandev.userservice.dto.req.CreateRoleRequestDto;
+import dev.edu.ngochandev.userservice.dto.req.UpdateRoleRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.RoleResponseDto;
 import dev.edu.ngochandev.userservice.service.RoleService;
 import jakarta.validation.Valid;
@@ -17,6 +18,16 @@ import org.springframework.web.bind.annotation.*;
 public class RoleController {
     private final Translator translator;
     private final RoleService roleService;
+
+    @PatchMapping("/{roleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<RoleResponseDto> updateRole(@PathVariable("roleId") String roleId, @RequestBody UpdateRoleRequestDto req) {
+        return SuccessResponseDto.<RoleResponseDto>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("role.update.success"))
+                .data(roleService.updateRole(roleId, req))
+                .build();
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

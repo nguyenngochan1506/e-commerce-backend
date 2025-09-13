@@ -6,6 +6,7 @@ import dev.edu.ngochandev.sharedkernel.exception.DuplicateResourceException;
 import dev.edu.ngochandev.sharedkernel.exception.ResourceNotFoundException;
 import dev.edu.ngochandev.userservice.common.MyUtils;
 import dev.edu.ngochandev.userservice.dto.req.CreateRoleRequestDto;
+import dev.edu.ngochandev.userservice.dto.req.UpdateRoleRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.PermissionResponseDto;
 import dev.edu.ngochandev.userservice.dto.res.RoleResponseDto;
 import dev.edu.ngochandev.userservice.entity.PermissionEntity;
@@ -100,5 +101,23 @@ public class RoleServiceImpl implements RoleService {
                 .totalItems(pageRoles.getTotalElements())
                 .items(roles)
                 .build();
+    }
+
+    @Override
+    public RoleResponseDto updateRole(String roleId, UpdateRoleRequestDto req) {
+        RoleEntity role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("error.role.notfound"));
+        if(req.getName() != null) role.setName(req.getName());
+        if(req.getDescription() != null) role.setDescription(req.getDescription());
+        if(req.getPermissionIds() != null) {
+            if(req.getPermissionIds().isEmpty()) {
+                role.setPermissions(new HashSet<>());
+            }else{
+                List<PermissionEntity> permissions = permissionRepository.findAllById(req.getPermissionIds());
+                if(permissions.size() != req.getPermissionIds().size()) throw new ResourceNotFoundException("error.permission.notfound");
+                role.setPermissions(new HashSet<>(permissions));
+            }
+        }
+        role = roleRepository.save(role);
+        return roleMapper.toResponseDto(role);
     }
 }
