@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import java.util.*;
@@ -15,6 +16,7 @@ import java.util.*;
 @Table(name = "tbl_products", schema = "product_schema")
 @Getter
 @Setter
+@SQLRestriction("is_deleted = false")
 public class ProductEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;

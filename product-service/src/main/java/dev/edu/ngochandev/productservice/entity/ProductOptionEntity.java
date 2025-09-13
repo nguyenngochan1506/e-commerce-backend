@@ -4,6 +4,7 @@ import dev.edu.ngochandev.sharedkernel.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Table(name = "tbl_product_options", schema = "product_schema")
 @Getter
 @Setter
+@SQLRestriction("is_deleted = false")
 public class ProductOptionEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;

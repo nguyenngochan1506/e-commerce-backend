@@ -33,3 +33,8 @@ app:
     reset-password-token:
       secret: 01f2e3d4c5b6a79887766554433221100ffeeddccbbaa99887766554433221100
       expiration: 900 # 15 minutes (in seconds)
+  super-admin:
+    username: superadmin
+    password: superadmin
+    email: superadmin@gmail.com
+    full-name: Super Admin

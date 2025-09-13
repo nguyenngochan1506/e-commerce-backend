@@ -7,6 +7,7 @@ import dev.edu.ngochandev.sharedkernel.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Table(name = "tbl_product_variants", schema = "product_schema")
 @Getter
 @Setter
+@SQLRestriction("is_deleted = false")
 public class ProductVariantEntity extends BaseEntity {
     @Column(name = "sku_code", nullable = false, unique = true)
     private String skuCode;

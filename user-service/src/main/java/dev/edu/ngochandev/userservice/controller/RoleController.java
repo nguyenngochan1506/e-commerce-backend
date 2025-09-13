@@ -26,4 +26,14 @@ public class RoleController {
                 .data(roleService.createRole(req))
                 .build();
     }
+
+    @DeleteMapping("/{roleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<String> deleteRole(@PathVariable("roleId") String roleId){
+        return SuccessResponseDto.<String>builder()
+                .httpStatus(HttpStatus.OK)
+                .message(translator.translate("role.delete.success"))
+                .data(roleService.deleteRole(roleId))
+                .build();
+    }
 }

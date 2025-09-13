@@ -6,6 +6,7 @@ import dev.edu.ngochandev.userservice.common.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import java.util.Set;
 @Table(name = "tbl_users", schema = "user_schema")
 @Getter
 @Setter
+@SQLRestriction("is_deleted = false")
 public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
