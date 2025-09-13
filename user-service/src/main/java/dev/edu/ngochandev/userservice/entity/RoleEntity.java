@@ -20,16 +20,10 @@ public class RoleEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "tbl_user_roles",
-        schema = "user_schema",
-        joinColumns = @JoinColumn(name = "role_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
     private Set<UserEntity> users = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "tbl_role_permissions",
         schema = "user_schema",

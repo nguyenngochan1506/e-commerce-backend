@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import dev.edu.ngochandev.sharedkernel.exception.UnauthorizedException;
 import dev.edu.ngochandev.userservice.common.TokenType;
 import dev.edu.ngochandev.userservice.entity.InvalidatedTokenEntity;
+import dev.edu.ngochandev.userservice.entity.RoleEntity;
 import dev.edu.ngochandev.userservice.entity.UserEntity;
 import dev.edu.ngochandev.userservice.repository.InvalidatedTokenRepository;
 import dev.edu.ngochandev.userservice.service.JwtService;
@@ -70,7 +71,7 @@ public class JwtServiceImpl implements JwtService {
                     .jwtID(UUID.randomUUID().toString())
                     .claim("username", user.getUsername())
                     .claim("email", user.getEmail())
-                    .claim("roles", List.of("NORMAL", "ADMIN"))
+                    .claim("roles", user.getRoles().stream().map(RoleEntity::getName).toList())
                     .build();
             // payload
             Payload payload = new Payload(claims.toJSONObject());

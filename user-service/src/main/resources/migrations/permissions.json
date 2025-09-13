@@ -47,5 +47,12 @@
     "method": "GET",
     "module": "permission",
     "isDefault": false
+  },
+  {
+    "name": "permission.role.list",
+    "apiPath": "/api/v1/roles",
+    "method": "GET",
+    "module": "role",
+    "isDefault": false
   }
 ]

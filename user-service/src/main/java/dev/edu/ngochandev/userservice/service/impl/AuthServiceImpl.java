@@ -8,6 +8,7 @@ import dev.edu.ngochandev.userservice.common.UserStatus;
 import dev.edu.ngochandev.userservice.dto.req.*;
 import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
 import dev.edu.ngochandev.userservice.entity.UserEntity;
+import dev.edu.ngochandev.userservice.repository.RoleRepository;
 import dev.edu.ngochandev.userservice.repository.UserRepository;
 import dev.edu.ngochandev.userservice.service.AuthService;
 import dev.edu.ngochandev.userservice.service.JwtService;
@@ -16,11 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -39,6 +43,10 @@ public class AuthServiceImpl implements AuthService {
         userEntity.setDateOfBirth(req.getDateOfBirth());
         userEntity.setAvatar(req.getAvatar());
         userEntity.setFullName(req.getFullName());
+
+        // default role USER
+        userEntity.setRoles(Set.of(Objects.requireNonNull(roleRepository.findByName("customer").orElse(null))));
+
         userRepository.save(userEntity);
 
 //        TODO: send verification email
