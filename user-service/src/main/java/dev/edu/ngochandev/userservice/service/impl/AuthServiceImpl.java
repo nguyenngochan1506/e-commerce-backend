@@ -86,6 +86,25 @@ public class AuthServiceImpl implements AuthService {
         user.setStatus(UserStatus.ACTIVE);
         userRepository.save(user);
 
+        jwtService.disableToken(token);
         return user.getId();
+    }
+
+    @Override
+    public TokenResponseDto refreshToken(UserEntity user, String accessToken, String refreshToken) {
+        //create new access token and refresh token
+        String newAccessToken = jwtService.generateToken(user, TokenType.ACCESS);
+        String newRefreshToken = jwtService.generateToken(user, TokenType.REFRESH);
+        Date accessTokenExpiresIn = jwtService.extractExpiration(newAccessToken);
+
+        //disable old refresh token and access token
+        jwtService.disableToken(accessToken);
+        jwtService.disableToken(refreshToken);
+
+        return TokenResponseDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .expirationTime(accessTokenExpiresIn)
+                .build();
     }
 }

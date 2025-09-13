@@ -6,11 +6,12 @@ import dev.edu.ngochandev.userservice.dto.req.LoginRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.RegisterUserRequestDto;
 import dev.edu.ngochandev.userservice.dto.req.TokenRequestDto;
 import dev.edu.ngochandev.userservice.dto.res.TokenResponseDto;
+import dev.edu.ngochandev.userservice.entity.UserEntity;
 import dev.edu.ngochandev.userservice.service.AuthService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,6 +38,17 @@ public class AuthController {
                 .message(translator.translate("user.login.success"))
                 .httpStatus(HttpStatus.OK)
                 .data(authService.authenticate(req))
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponseDto<TokenResponseDto> refreshToken(@AuthenticationPrincipal UserEntity user, @RequestHeader("Authorization") String authorizationHeader, @RequestBody @Valid TokenRequestDto req) {
+        String accessToken = authorizationHeader.replace("Bearer ", "");
+        return SuccessResponseDto.<TokenResponseDto>builder()
+                .message(translator.translate("user.token.refresh.success"))
+                .httpStatus(HttpStatus.OK)
+                .data(authService.refreshToken(user, accessToken, req.getToken()))
                 .build();
     }
 

@@ -7,8 +7,11 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import dev.edu.ngochandev.sharedkernel.exception.UnauthorizedException;
 import dev.edu.ngochandev.userservice.common.TokenType;
+import dev.edu.ngochandev.userservice.entity.InvalidatedTokenEntity;
 import dev.edu.ngochandev.userservice.entity.UserEntity;
+import dev.edu.ngochandev.userservice.repository.InvalidatedTokenRepository;
 import dev.edu.ngochandev.userservice.service.JwtService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,10 +21,13 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j(topic = "JwtService")
+@RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
+    private final InvalidatedTokenRepository invalidatedTokenRepository;
     @Value("${app.jwt.access-token.secret}")
     private String accessTokenSecretKey;
     @Value("${app.jwt.access-token.expiration}")
@@ -61,6 +67,7 @@ public class JwtServiceImpl implements JwtService {
                     .expirationTime(new Date(Instant.now().plus(expiration, ChronoUnit.SECONDS).toEpochMilli()))
                     .subject(user.getId())
                     .issuer(issuer)
+                    .jwtID(UUID.randomUUID().toString())
                     .claim("username", user.getUsername())
                     .claim("email", user.getEmail())
                     .claim("roles", List.of("NORMAL", "ADMIN"))
@@ -90,7 +97,7 @@ public class JwtServiceImpl implements JwtService {
             JWSVerifier verifier = new MACVerifier(secretKey);
             SignedJWT signedJWT = SignedJWT.parse(token);
             Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
-            return signedJWT.verify(verifier) && expiration.after(new Date());
+            return signedJWT.verify(verifier) && expiration.after(new Date()) && !invalidatedTokenRepository.existsByJti(signedJWT.getJWTClaimsSet().getJWTID());
         }catch (JOSEException | ParseException e) {
             throw new UnauthorizedException("error.token.invalid");
         }
@@ -107,7 +114,11 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String extractJti(String token) {
-        return "";
+        try {
+            return SignedJWT.parse(token).getJWTClaimsSet().getJWTID();
+        } catch (ParseException e) {
+            throw new UnauthorizedException("error.token.invalid");
+        }
     }
 
     @Override
@@ -117,5 +128,18 @@ public class JwtServiceImpl implements JwtService {
         } catch (ParseException e) {
             throw new UnauthorizedException("error.token.invalid");
         }
+    }
+
+    @Override
+    public String disableToken(String token) {
+        String jti = extractJti(token);
+        Date expiration = extractExpiration(token);
+
+        InvalidatedTokenEntity invalidatedToken = new InvalidatedTokenEntity();
+        invalidatedToken.setJti(jti);
+        invalidatedToken.setExpiration(expiration);
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        return invalidatedToken.getJti();
     }
 }
